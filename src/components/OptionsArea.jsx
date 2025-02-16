@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { images } from '../data/puzzleData';
 
 function OptionsArea({ puzzles, completed, onDragStart, draggedItem }) {
+    const dragItemRef = useRef(null);
 
+    const handlePointerDown = (itemId) => {
+        onDragStart(itemId);
+        dragItemRef.current = itemId; // Store the dragged item ID
+    }
 
   return (
     <div>
@@ -15,7 +20,7 @@ function OptionsArea({ puzzles, completed, onDragStart, draggedItem }) {
             return (
               <div
                 key={option}
-                onPointerDown={() => onDragStart(option)}
+                onPointerDown={() => handlePointerDown(option)}
                 className={`w-32 h-32 rounded-lg cursor-grab ${
                   isDragging ? 'dragging' : ''
                 } ${isCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}

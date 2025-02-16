@@ -150,7 +150,7 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
     <div
       ref={drag}
       className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab ${
-        isDragging ? 'dragging scale-110 shadow-lg' : '' // Add scale and shadow
+        isDragging ? 'ring-4 ring-accent scale-110 shadow-xl' : '' // Enhanced styling
       } ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
       aria-label={`Puzzle piece ${id}`}
     >
@@ -158,6 +158,9 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
         src={images[id.split('_')[0]][id.split('_')[1]]}
         alt={id}
         className="w-full h-full object-cover rounded-lg"
+        onError={(e) => { // Check for image loading errors
+          console.error("Error loading image:", e.target.src);
+        }}
       />
     </div>
   );

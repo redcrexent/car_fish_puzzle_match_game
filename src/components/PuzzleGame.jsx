@@ -8,8 +8,8 @@ function PuzzleGame() {
   const [completed, setCompleted] = useState([]);
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedOverPuzzle, setDraggedOverPuzzle] = useState(null);
-  const [showOverlay, setShowOverlay] = useState(false); // Control overlay visibility
-  const [overlayImage, setOverlayImage] = useState(''); // Store the full image URL
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [overlayImage, setOverlayImage] = useState('');
 
   const handleDrop = (puzzleId) => {
     if (!draggedItem) return;
@@ -19,14 +19,16 @@ function PuzzleGame() {
     if (puzzle && draggedItem === puzzle.type + '_' + puzzle.correctHalf) {
       setScore((prevScore) => prevScore + 1);
       setCompleted([...completed, puzzle.id]);
-      setShowOverlay(true); // Show the overlay
-      setOverlayImage(images[puzzle.type].full); // Set the *full* image
+      setShowOverlay(true);
+      setOverlayImage(images[puzzle.type].full);
 
-      // Set a timeout to hide the overlay and move to the next puzzle
+      console.log("Correct Match! Showing overlay and setting timeout..."); // Debug log
+
       setTimeout(() => {
         setShowOverlay(false);
         nextPuzzle();
-      }, 2000); // 2 seconds
+        console.log("Timeout finished, overlay hidden, nextPuzzle called."); // Debug log
+      }, 2000);
 
     } else {
       console.log('Incorrect!');
@@ -47,16 +49,19 @@ function PuzzleGame() {
     setDraggedOverPuzzle(null);
   };
 
-
   const nextPuzzle = () => {
-    setCurrentPuzzleIndex((prevIndex) => (prevIndex + 1) % puzzles.length);
+    console.log("nextPuzzle called - currentPuzzleIndex before:", currentPuzzleIndex); // Debug log
+    setCurrentPuzzleIndex((prevIndex) => {
+      const nextIndex = (prevIndex + 1) % puzzles.length;
+      console.log("nextPuzzle - currentPuzzleIndex after:", nextIndex); // Debug log
+      return nextIndex;
+    });
   };
 
 
   const isCompleted = completed.includes(puzzles[currentPuzzleIndex]?.id);
   const currentPuzzle = puzzles[currentPuzzleIndex];
 
-  // Clear any existing timeout if the component unmounts or the current puzzle changes *before* the timeout fires
   useEffect(() => {
       return () => clearTimeout();
   }, [currentPuzzleIndex]);

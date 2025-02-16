@@ -49,7 +49,15 @@ function PuzzleGame() {
         setCompleted([...completed, currentPuzzle.id]);
         nextPuzzle.current();
       } else {
-        console.log('Incorrect!');
+          // Add visual feedback for incorrect drop (e.g., a shake)
+          if (puzzleAreaRef.current) {
+            puzzleAreaRef.current.classList.add('shake');
+            setTimeout(() => {
+              if (puzzleAreaRef.current) { // Check if ref is still valid
+                puzzleAreaRef.current.classList.remove('shake');
+              }
+            }, 500); // Remove the class after 500ms
+          }
       }
     },
     collect: (monitor) => ({
@@ -65,10 +73,10 @@ function PuzzleGame() {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center h-screen bg-cover bg-center ${bgImage}`}
+      className={`flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-4 ${bgImage}`}
       key={key}
     >
-      <div className="text-2xl mb-4 text-white">Score: {score}</div>
+      <div className="text-2xl sm:text-4xl mb-4 text-white">Score: {score}</div>
 
       {/* Puzzle Area */}
       <PuzzleArea
@@ -98,7 +106,8 @@ function PuzzleArea({ puzzleAreaRef, drop, currentPuzzle, puzzleCompleted, isOve
                 puzzleAreaRef.current = node;
                 drop(node);
             }}
-            className={`drop-target w-full max-w-md h-64 border-4 border-dashed rounded-lg flex items-center justify-center bg-gray-200 relative  ${isOver ? 'drop-target-active' : ''}`}
+            className={`drop-target w-full max-w-md h-48 sm:h-64 border-4 border-dashed rounded-lg flex items-center justify-center bg-gray-200 relative  ${isOver ? 'drop-target-active' : ''} transition-transform`}
+            aria-label={`Puzzle area for ${currentPuzzle.type}`}
         >
             <>
                 <img
@@ -134,9 +143,10 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
   return (
     <div
       ref={drag}
-      className={`draggable w-32 h-32 rounded-lg cursor-grab ${
+      className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab ${
         isDragging ? 'dragging' : ''
       } ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
+      aria-label={`Puzzle piece ${id}`}
     >
       <img
         src={images[id.split('_')[0]][id.split('_')[1]]}

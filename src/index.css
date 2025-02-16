@@ -16,6 +16,11 @@ body {
   border: 2px dashed #accent;
 }
 
+.drop-target-active {
+    border: 2px dashed #secondary;
+    background-color: rgba(65, 105, 225, 0.1);
+}
+
 /* Styles for the fullscreen overlay */
 .overlay {
   position: fixed;

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend'; // Import getEmptyImage
 import { images, initialPuzzles } from '../data/puzzleData';
 
 const ItemTypes = {
@@ -132,7 +133,7 @@ function PuzzleArea({ puzzleAreaRef, drop, currentPuzzle, puzzleCompleted, isOve
 }
 
 function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: ItemTypes.PIECE,
     item: { id },
     collect: (monitor) => ({
@@ -140,11 +141,16 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
     }),
   }));
 
+  // Use useEffect to set the drag preview to an empty image
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
+
   return (
     <div
       ref={drag}
       className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab ${
-        isDragging ? 'dragging' : ''
+        isDragging ? 'dragging scale-110 shadow-lg' : '' // Add scale and shadow
       } ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
       aria-label={`Puzzle piece ${id}`}
     >

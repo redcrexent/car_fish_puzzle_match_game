@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { images, initialPuzzles } from '../data/puzzleData';
 
@@ -11,13 +11,23 @@ function PuzzleGame() {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState([]);
+    const [key, setKey] = useState(0);
+
 
   const currentPuzzle = puzzles[currentPuzzleIndex];
   const puzzleAreaRef = useRef(null); // Ref for the puzzle area
 
-  const nextPuzzle = () => {
-    setCurrentPuzzleIndex((prevIndex) => (prevIndex + 1) % puzzles.length);
+    const nextPuzzle = () => {
+    if (currentPuzzleIndex === puzzles.length - 1) {
+      // Reset the game if we're at the last puzzle
+      setCompleted([]);
+      setCurrentPuzzleIndex(0);
+      setKey(prevKey => prevKey + 1); // Force re-render
+    } else {
+      setCurrentPuzzleIndex((prevIndex) => prevIndex + 1);
+    }
   };
+
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.PIECE,
@@ -34,12 +44,12 @@ function PuzzleGame() {
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
-  }));
+  }), [currentPuzzle, nextPuzzle]); // Add currentPuzzle and nextPuzzle as dependencies
 
   const isCompleted = completed.includes(currentPuzzle.id);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen" key={key}>
       <h1 className="text-4xl font-bold mb-4">Car &amp; Fish Puzzle Match</h1>
       <div className="text-2xl mb-4">Score: {score}</div>
 

@@ -139,15 +139,30 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
     }),
   }));
 
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const pieceRef = useRef(null);
+
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+    setPosition({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchEnd = () => {
+    setPosition({ x: 0, y: 0 });
+  };
 
   return (
     <div
       ref={drag}
       className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab transition-transform duration-300 ${isDragging ? 'ring-4 ring-accent scale-110 shadow-xl' : ''} ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
       aria-label={`Puzzle piece ${id}`}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
     >
       <img
         src={images[id.split('_')[0]][id.split('_')[1]]}

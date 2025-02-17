@@ -130,6 +130,7 @@ function PuzzleArea({ puzzleAreaRef, drop, currentPuzzle, puzzleCompleted, isOve
   );
 }
 
+
 function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: ItemTypes.PIECE,
@@ -141,15 +142,26 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const pieceRef = useRef(null);
+  const touchStartRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
 
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
   const handleTouchMove = (e) => {
     const touch = e.touches[0];
-    const rect = pieceRef.current.getBoundingClientRect();
-    setPosition({ x: touch.clientX - rect.width / 2, y: touch.clientY - rect.height / 2 });
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+    setPosition((prevPosition) => ({
+      x: prevPosition.x + deltaX,
+      y: prevPosition.y + deltaY,
+    }));
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
   };
 
   const handleTouchEnd = () => {
@@ -164,6 +176,7 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
       }}
       className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab transition-transform duration-300 ${isDragging ? 'ring-4 ring-accent scale-110 shadow-xl' : ''} ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
       aria-label={`Puzzle piece ${id}`}
+      onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       style={{ transform: `translate(${position.x}px, ${position.y}px)` }}

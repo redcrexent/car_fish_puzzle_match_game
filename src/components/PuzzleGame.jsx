@@ -148,7 +148,8 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
 
   const handleTouchMove = (e) => {
     const touch = e.touches[0];
-    setPosition({ x: touch.clientX, y: touch.clientY });
+    const rect = pieceRef.current.getBoundingClientRect();
+    setPosition({ x: touch.clientX - rect.width / 2, y: touch.clientY - rect.height / 2 });
   };
 
   const handleTouchEnd = () => {
@@ -157,7 +158,10 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
 
   return (
     <div
-      ref={drag}
+      ref={(node) => {
+        drag(node);
+        pieceRef.current = node;
+      }}
       className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab transition-transform duration-300 ${isDragging ? 'ring-4 ring-accent scale-110 shadow-xl' : ''} ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
       aria-label={`Puzzle piece ${id}`}
       onTouchMove={handleTouchMove}

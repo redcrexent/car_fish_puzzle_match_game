@@ -7,7 +7,7 @@ const ItemTypes = {
   PIECE: 'piece',
 };
 
-function PuzzleGame() {
+export default function PuzzleGame() {
   const [puzzles] = useState(initialPuzzles);
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -50,7 +50,7 @@ function PuzzleGame() {
         setTimeout(() => {
           setFullScreenImage(null);
           nextPuzzle.current();
-        }, 5000); // Hide the full-screen image after 5 seconds
+        }, 3000); // Hide the full-screen image after 3 seconds
       } else {
         if (puzzleAreaRef.current) {
           puzzleAreaRef.current.classList.add('shake');
@@ -179,5 +179,3 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
     </div>
   );
 }
-
-export default PuzzleGame;

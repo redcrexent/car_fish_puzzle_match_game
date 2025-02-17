@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@originjs/vite-plugin-require-context": "^1.0.9",
     "dnd-multi-backend": "^9.0.0",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",

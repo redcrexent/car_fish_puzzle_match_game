@@ -2,16 +2,16 @@ import React, { useRef } from 'react';
 import { images } from '../data/puzzleData';
 
 function OptionsArea({ puzzles, completed, onDragStart, draggedItem }) {
-    const dragItemRef = useRef(null);
+  const dragItemRef = useRef(null);
 
-    const handlePointerDown = (itemId) => {
-        onDragStart(itemId);
-        dragItemRef.current = itemId; // Store the dragged item ID
-    }
+  const handlePointerDown = (itemId) => {
+    onDragStart(itemId);
+    dragItemRef.current = itemId; // Store the dragged item ID
+  }
 
   return (
     <div>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 justify-center">
         {puzzles.map((puzzle) =>
           puzzle.options.map((option) => {
             const isCompleted = completed.includes(puzzle.id);
@@ -21,7 +21,7 @@ function OptionsArea({ puzzles, completed, onDragStart, draggedItem }) {
               <div
                 key={option}
                 onPointerDown={() => handlePointerDown(option)}
-                className={`w-32 h-32 rounded-lg cursor-grab ${
+                className={`w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab ${
                   isDragging ? 'dragging' : ''
                 } ${isCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
               >

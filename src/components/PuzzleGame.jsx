@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend'; // Import getEmptyImage
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import { images, initialPuzzles } from '../data/puzzleData';
 
 const ItemTypes = {
@@ -13,11 +13,11 @@ function PuzzleGame() {
   const [score, setScore] = useState(0);
   const [completed, setCompleted] = useState([]);
   const [key, setKey] = useState(0);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
 
   const currentPuzzle = puzzles[currentPuzzleIndex];
-  const puzzleAreaRef = useRef(null); // Ref for the puzzle area
+  const puzzleAreaRef = useRef(null);
 
-    // Use a ref to store nextPuzzle, ensuring it's always up-to-date
   const nextPuzzle = useRef(() => {
     if (currentPuzzleIndex === puzzles.length - 1) {
       setCompleted([]);
@@ -28,7 +28,6 @@ function PuzzleGame() {
     }
   });
 
-  // Update the ref whenever nextPuzzle's dependencies change
   useEffect(() => {
     nextPuzzle.current = () => {
       if (currentPuzzleIndex === puzzles.length - 1) {
@@ -41,45 +40,46 @@ function PuzzleGame() {
     };
   }, [currentPuzzleIndex, puzzles.length]);
 
-
-    const [{ isOver }, drop] = useDrop(() => ({
+  const [{ isOver }, drop] = useDrop(() => ({
     accept: ItemTypes.PIECE,
     drop: (item) => {
       if (item.id === `${currentPuzzle.type}_${currentPuzzle.correctHalf}`) {
         setScore((prevScore) => prevScore + 1);
         setCompleted([...completed, currentPuzzle.id]);
-        nextPuzzle.current();
+        setFullScreenImage(images[currentPuzzle.type].full);
+        setTimeout(() => {
+          setFullScreenImage(null);
+          nextPuzzle.current();
+        }, 5000); // Hide the full-screen image after 5 seconds
       } else {
-          // Add visual feedback for incorrect drop (e.g., a shake)
-          if (puzzleAreaRef.current) {
-            puzzleAreaRef.current.classList.add('shake');
-            setTimeout(() => {
-              if (puzzleAreaRef.current) { // Check if ref is still valid
-                puzzleAreaRef.current.classList.remove('shake');
-              }
-            }, 500); // Remove the class after 500ms
-          }
+        if (puzzleAreaRef.current) {
+          puzzleAreaRef.current.classList.add('shake');
+          setTimeout(() => {
+            if (puzzleAreaRef.current) {
+              puzzleAreaRef.current.classList.remove('shake');
+            }
+          }, 500);
+        }
       }
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
-    }), [currentPuzzle, completed, score]); //correct dependencies
+  }), [currentPuzzle, completed, score]);
 
   const puzzleCompleted = completed.includes(currentPuzzle.id);
-
-    // Determine the background image based on the puzzle type
   const bgImage = currentPuzzle.type.startsWith('car') ? 'bg-[url("/road_bg.png")]' : 'bg-[url("/water_bg.png")]';
 
-
   return (
-    <div
-      className={`flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-4 ${bgImage}`}
-      key={key}
-    >
-      <div className="text-2xl sm:text-4xl mb-4 text-white">Score: {score}</div>
+    <div className={`flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-4 ${bgImage}`} key={key}>
+      <div className="text-2xl sm:text-4xl mb-4 text-white font-bold shadow-lg">Score: {score}</div>
 
-      {/* Puzzle Area */}
+      {fullScreenImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-500">
+          <img src={fullScreenImage} alt="Full Screen Puzzle" className="max-w-full max-h-full rounded-lg shadow-2xl" />
+        </div>
+      )}
+
       <PuzzleArea
         puzzleAreaRef={puzzleAreaRef}
         drop={drop}
@@ -88,11 +88,10 @@ function PuzzleGame() {
         isOver={isOver}
       />
 
-      {/* Options Area */}
       <div className="mt-8">
         <div className="flex flex-wrap justify-center gap-4">
           {currentPuzzle.options.map((option) => (
-            <PuzzlePiece key={option} id={option} puzzleCompleted={puzzleCompleted} currentPuzzle={currentPuzzle}/>
+            <PuzzlePiece key={option} id={option} puzzleCompleted={puzzleCompleted} currentPuzzle={currentPuzzle} />
           ))}
         </div>
       </div>
@@ -101,35 +100,34 @@ function PuzzleGame() {
 }
 
 function PuzzleArea({ puzzleAreaRef, drop, currentPuzzle, puzzleCompleted, isOver }) {
-    return (
-        <div
-            ref={(node) => {
-                puzzleAreaRef.current = node;
-                drop(node);
-            }}
-            className={`drop-target w-full max-w-md h-48 sm:h-64 border-4 border-dashed rounded-lg flex items-center justify-center bg-gray-200 relative  ${isOver ? 'drop-target-active' : ''} transition-transform`}
-            aria-label={`Puzzle area for ${currentPuzzle.type}`}
-        >
-            <>
-                <img
-                    src={images[currentPuzzle.type].left}
-                    alt={`${currentPuzzle.type} left`}
-                    className="w-1/2 h-full object-cover rounded-l-lg"
-                />
-                <div className="w-1/2 h-full relative">
-                    {/* Only show the blurred image if the puzzle is NOT completed */}
-                    {!puzzleCompleted && (
-                        <img
-                            src={images[currentPuzzle.type][currentPuzzle.correctHalf]}
-                            alt={`${currentPuzzle.type} blurred ${currentPuzzle.correctHalf}`}
-                            className="absolute inset-0 w-full h-full object-cover rounded-r-lg blur-sm"
-                        />
-                    )}
-                </div>
-            </>
-             {puzzleCompleted && <div className="absolute inset-0 bg-gray-200 opacity-50 rounded-lg"></div>}
+  return (
+    <div
+      ref={(node) => {
+        puzzleAreaRef.current = node;
+        drop(node);
+      }}
+      className={`drop-target w-full max-w-md h-48 sm:h-64 border-4 border-dashed rounded-lg flex items-center justify-center bg-gray-200 relative ${isOver ? 'drop-target-active' : ''} transition-transform shadow-lg`}
+      aria-label={`Puzzle area for ${currentPuzzle.type}`}
+    >
+      <>
+        <img
+          src={images[currentPuzzle.type].left}
+          alt={`${currentPuzzle.type} left`}
+          className="w-1/2 h-full object-cover rounded-l-lg"
+        />
+        <div className="w-1/2 h-full relative">
+          {!puzzleCompleted && (
+            <img
+              src={images[currentPuzzle.type][currentPuzzle.correctHalf]}
+              alt={`${currentPuzzle.type} blurred ${currentPuzzle.correctHalf}`}
+              className="absolute inset-0 w-full h-full object-cover rounded-r-lg blur-sm"
+            />
+          )}
         </div>
-    );
+      </>
+      {puzzleCompleted && <div className="absolute inset-0 bg-gray-200 opacity-50 rounded-lg"></div>}
+    </div>
+  );
 }
 
 function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
@@ -141,7 +139,6 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
     }),
   }));
 
-  // Use useEffect to set the drag preview to an empty image
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
@@ -149,16 +146,14 @@ function PuzzlePiece({ id, puzzleCompleted, currentPuzzle }) {
   return (
     <div
       ref={drag}
-      className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab ${
-        isDragging ? 'ring-4 ring-accent scale-110 shadow-xl' : '' // Enhanced styling
-      } ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
+      className={`draggable w-24 h-24 sm:w-32 sm:h-32 rounded-lg cursor-grab transition-transform duration-300 ${isDragging ? 'ring-4 ring-accent scale-110 shadow-xl' : ''} ${puzzleCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
       aria-label={`Puzzle piece ${id}`}
     >
       <img
         src={images[id.split('_')[0]][id.split('_')[1]]}
         alt={id}
         className="w-full h-full object-cover rounded-lg"
-        onError={(e) => { // Check for image loading errors
+        onError={(e) => {
           console.error("Error loading image:", e.target.src);
         }}
       />

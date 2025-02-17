@@ -33,3 +33,16 @@ logs/
 *.sw?
 
 .history
+node_modules/.package-lock.json
+node_modules/.vite/deps/_metadata.json
+node_modules/.vite/deps/package.json
+node_modules/.vite/deps/react_jsx-dev-runtime.js
+node_modules/.vite/deps/react_jsx-dev-runtime.js.map
+node_modules/.vite/deps/react_jsx-runtime.js
+node_modules/.vite/deps/react_jsx-runtime.js.map
+node_modules/.vite/deps/react-dom_client.js
+node_modules/.vite/deps/react-dom_client.js.map
+node_modules/.vite/deps/react-dom.js
+node_modules/.vite/deps/react-dom.js.map
+node_modules/.vite/deps/react.js
+node_modules/.vite/deps/react.js.map

@@ -3,7 +3,7 @@ import { images } from '../data/puzzleData';
 
 function PuzzleArea({ puzzles, completed, onDrop, draggedOverPuzzle, onDragOver, onDragLeave }) {
   return (
-    <div>
+    <div className="flex flex-wrap justify-center gap-4">
       {puzzles.map((puzzle) => {
         const isCompleted = completed.includes(puzzle.id);
         const isDraggedOver = draggedOverPuzzle === puzzle.id;
@@ -14,7 +14,7 @@ function PuzzleArea({ puzzles, completed, onDrop, draggedOverPuzzle, onDragOver,
             onPointerUp={() => onDrop(puzzle.id)}
             onPointerOver={() => onDragOver(puzzle.id)}
             onPointerLeave={onDragLeave}
-            className={`w-64 h-64 border-4 border-dashed rounded-lg flex items-center justify-center bg-gray-200 relative ${
+            className={`w-48 h-48 sm:w-64 sm:h-64 border-4 border-dashed rounded-lg flex items-center justify-center bg-gray-200 relative ${
               isCompleted ? 'opacity-50' : ''
             } ${isDraggedOver ? 'ring-2 ring-secondary' : ''}`}
           >

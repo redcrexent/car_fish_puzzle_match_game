@@ -3,22 +3,23 @@
 @tailwind utilities;
 
 body {
-  @apply bg-primary;
+  @apply bg-gradient-to-r from-blue-500 to-purple-500;
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
 }
 
 .dragging {
   opacity: 0.5;
-  border: 2px dashed #accent;
+  border: 2px dashed #FF6347;
 }
 
 .drop-target-active {
-    border: 2px dashed #secondary;
-    background-color: rgba(65, 105, 225, 0.1);
+  border: 2px dashed #4169E1;
+  background-color: rgba(65, 105, 225, 0.1);
 }
 
 /* Add a shake animation for incorrect drops */

@@ -34,10 +34,10 @@ export const images = {
 
 // Initial puzzle data (increased variety)
 export const initialPuzzles = [
-  { id: 'puzzle1', type: 'car1', correctHalf: 'right', options: ['car1_right', 'fish1_right', 'car2_right'] },
-  { id: 'puzzle2', type: 'fish1', correctHalf: 'right', options: ['fish1_right', 'car1_right', 'fish2_right'] },
-  { id: 'puzzle3', type: 'car2', correctHalf: 'right', options: ['car2_right', 'fish2_right', 'fish1_right'] },
-  { id: 'puzzle4', type: 'fish2', correctHalf: 'right', options: ['fish2_right', 'car2_right', 'car1_right'] },
-  { id: 'puzzle5', type: 'car3', correctHalf: 'right', options: ['car3_right', 'fish3_right', 'fish1_right'] },
-  { id: 'puzzle6', type: 'fish3', correctHalf: 'right', options: ['fish3_right', 'car3_right', 'car1_right'] },
+  { id: 'puzzle1', type: 'car1', correctHalf: 'right', options: ['car1_right', 'fish1_right', 'car2_right'].sort(() => Math.random() - 0.5) },
+  { id: 'puzzle2', type: 'fish1', correctHalf: 'right', options: ['fish1_right', 'car1_right', 'fish2_right'].sort(() => Math.random() - 0.5)},
+  { id: 'puzzle3', type: 'car2', correctHalf: 'right', options: ['car2_right', 'fish2_right', 'fish1_right'].sort(() => Math.random() - 0.5) },
+  { id: 'puzzle4', type: 'fish2', correctHalf: 'right', options: ['fish2_right', 'car2_right', 'car1_right'].sort(() => Math.random() - 0.5) },
+  { id: 'puzzle5', type: 'car3', correctHalf: 'right', options: ['car3_right', 'fish3_right', 'fish1_right'].sort(() => Math.random() - 0.5) },
+  { id: 'puzzle6', type: 'fish3', correctHalf: 'right', options: ['fish3_right', 'car3_right', 'car1_right'].sort(() => Math.random() - 0.5) },
 ];
